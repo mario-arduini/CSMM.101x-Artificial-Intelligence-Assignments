@@ -44,7 +44,7 @@ def outgen(tuple):
         pathstr+=el
         pathstr+=','
     pathstr=pathstr[:-1]+']'
-    output='path _to_goal: '+pathstr+'\ncost_of_path: '+layer+'\nnodes_expanded: '+str(exp)+'\nsearch_depth: '+layer+'\nmax_search_depth: '+str(msd)
+    output='path_to_goal: '+pathstr+'\ncost_of_path: '+layer+'\nnodes_expanded: '+str(exp)+'\nsearch_depth: '+layer+'\nmax_search_depth: '+str(msd)
     f.write(output)
     #f.write(('\nrunning_time: ',rt))
     #f.write(('\nmax_ram_usage: ',mu))
@@ -131,7 +131,84 @@ def bfs():
 
 # Depth First Search
 def dfs():
-    pass
+    front = [inits]
+    exp = 0
+    msd = 0
+    while len(front)>0:
+        cur = front.pop();
+        exp += 1
+
+        if DEBUG_VAR :
+            print('exp = ',exp)
+            print('dequeued depth('+str(cur.layer)+')')
+            pb(cur.board)
+
+        if cur.value == solved:
+            if DEBUG_VAR : print('solved (depth '+str(cur.layer)+') ',cur.board," node expanded ",exp," msd ",msd)
+            return (cur,exp,msd)
+        del fronted[cur.value]
+        explored[cur.value] = cur
+        for i in range(len(cur.board)):
+            if cur.board[i] == '0':
+                if i in range(0,2) or i in range(3,5) or i in range(6,8):
+                    #expand right
+                    newboard = cur.board.copy()
+                    swap=newboard[i+1]
+                    newboard[i+1]=newboard[i]
+                    newboard[i]=swap
+                    new = State(newboard,cur.layer+1,cur,'Right')
+                    if not (new.value in explored or new.value in fronted):
+                        if DEBUG_VAR :
+                            print('new node generated from "right" (depth '+str(new.layer)+' ) move: ')
+                            pb(new.board)
+                        if new.layer > msd : msd = new.layer
+                        fronted[new.value]=new
+                        front.append(new)
+                if i in range(1,3) or i in range(4,6) or i in range(7,9):
+                    #expand left
+                    newboard = cur.board.copy()
+                    swap=newboard[i-1]
+                    newboard[i-1]=newboard[i]
+                    newboard[i]=swap
+                    new = State(newboard,cur.layer+1,cur,'Left')
+                    if not (new.value in explored or new.value in fronted):
+                        if DEBUG_VAR :
+                            print('new node generated from "left" (depth '+str(new.layer)+' ) move: ')
+                            pb(new.board)
+                        if new.layer > msd : msd = new.layer
+                        fronted[new.value]=new
+                        front.append(new)
+                if i<6:
+                    #expand down
+                    newboard = cur.board.copy()
+                    swap=newboard[i+3]
+                    newboard[i+3]=newboard[i]
+                    newboard[i]=swap
+                    new = State(newboard,cur.layer+1,cur,'Down')
+                    if not (new.value in explored or new.value in fronted):
+                        if DEBUG_VAR :
+                            print('new node generated from "down" (depth '+str(new.layer)+' ) move: ')
+                            pb(new.board)
+                        if new.layer > msd : msd = new.layer
+                        fronted[new.value]=new
+                        front.append(new)
+                if i>2:
+                    #expand up
+                    newboard = cur.board.copy()
+                    swap=newboard[i-3]
+                    newboard[i-3]=newboard[i]
+                    newboard[i]=swap
+                    new = State(newboard,cur.layer+1,cur,'Up')
+                    if not (new.value in explored or new.value in fronted):
+                        if DEBUG_VAR :
+                            print('new node generated from "up" (depth '+str(new.layer)+' ) move: ')
+                            pb(new.board)
+                        if new.layer > msd : msd = new.layer
+                        fronted[new.value]=new
+                        front.append(new)
+                break
+    return None
+
 
 # A* Search with Manhattan heuristic
 def ast():
