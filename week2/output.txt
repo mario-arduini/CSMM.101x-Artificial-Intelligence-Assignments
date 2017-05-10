@@ -1,0 +1,5 @@
+path _to_goal: []
+cost_of_path: 0
+nodes_expanded: 1
+search_depth: 0
+max_search_depth: 0

@@ -1,5 +1,12 @@
+# import
 import sys
 from collections import deque
+
+# Debug Mode
+if len(sys.argv)>3 and sys.argv[3]==1 :  DEBUG_VAR = 1
+else  DEBUG_VAR = 0
+
+# State definition
 class State:
     def __init__(self,board,layer,parent,move):
         self.board = board
@@ -10,11 +17,14 @@ class State:
         self.par = parent
         self.parmove = move
 
-def pb(board):
-    print(board[:3])
-    print(board[3:6])
-    print(board[6:9])
+# Utility to print the board (3x3)
+if DEBUG_VAR :
+    def pb(board):
+        print(board[:3])
+        print(board[3:6])
+        print(board[6:9])
 
+# Utility to generate the output file (require a tuple with final state, explored nodes and maximum depth search)
 def outgen(tuple):
     f = open('output.txt','w')
     path = ''
@@ -39,6 +49,7 @@ def outgen(tuple):
     #f.write(('\nrunning_time: ',rt))
     #f.write(('\nmax_ram_usage: ',mu))
 
+# implementation of Breadth First Search
 def bfs():
     front = deque([inits])
     exp=0
@@ -47,12 +58,13 @@ def bfs():
         cur = front.popleft()
         exp += 1
 
-        print('exp = ',exp)
-        print('dequeued depth('+str(cur.layer)+')')
-        pb(cur.board)
+        if DEBUG_VAR :
+            print('exp = ',exp)
+            print('dequeued depth('+str(cur.layer)+')')
+            pb(cur.board)
 
         if cur.value == solved:
-            print('solved (depth '+str(cur.layer)+') ',cur.board," node expanded ",exp," msd ",msd)
+            if DEBUG_VAR : print('solved (depth '+str(cur.layer)+') ',cur.board," node expanded ",exp," msd ",msd)
             return (cur,exp,msd)
         del fronted[cur.value]
         explored[cur.value] = cur
@@ -66,8 +78,9 @@ def bfs():
                     newboard[i]=swap
                     new = State(newboard,cur.layer+1,cur,'Up')
                     if not (new.value in explored or new.value in fronted):
-                        print('new node generated from "up" (depth '+str(new.layer)+' ) move: ')
-                        pb(new.board)
+                        if DEBUG_VAR :
+                            print('new node generated from "up" (depth '+str(new.layer)+' ) move: ')
+                            pb(new.board)
                         if new.layer > msd : msd = new.layer
                         fronted[new.value]=new
                         front.append(new)
@@ -79,8 +92,9 @@ def bfs():
                     newboard[i]=swap
                     new = State(newboard,cur.layer+1,cur,'Down')
                     if not (new.value in explored or new.value in fronted):
-                        print('new node generated from "down" (depth '+str(new.layer)+' ) move: ')
-                        pb(new.board)
+                        if DEBUG_VAR :
+                            print('new node generated from "down" (depth '+str(new.layer)+' ) move: ')
+                            pb(new.board)
                         if new.layer > msd : msd = new.layer
                         fronted[new.value]=new
                         front.append(new)
@@ -92,8 +106,9 @@ def bfs():
                     newboard[i]=swap
                     new = State(newboard,cur.layer+1,cur,'Left')
                     if not (new.value in explored or new.value in fronted):
-                        print('new node generated from "left" (depth '+str(new.layer)+' ) move: ')
-                        pb(new.board)
+                        if DEBUG_VAR :
+                            print('new node generated from "left" (depth '+str(new.layer)+' ) move: ')
+                            pb(new.board)
                         if new.layer > msd : msd = new.layer
                         fronted[new.value]=new
                         front.append(new)
@@ -105,21 +120,24 @@ def bfs():
                     newboard[i]=swap
                     new = State(newboard,cur.layer+1,cur,'Right')
                     if not (new.value in explored or new.value in fronted):
-                        print('new node generated from "right" (depth '+str(new.layer)+' ) move: ')
-                        pb(new.board)
+                        if DEBUG_VAR :
+                            print('new node generated from "right" (depth '+str(new.layer)+' ) move: ')
+                            pb(new.board)
                         if new.layer > msd : msd = new.layer
                         fronted[new.value]=new
                         front.append(new)
                 break
     return None
 
-
+# Depth First Search
 def dfs():
     pass
 
+# A* Search with Manhattan heuristic
 def ast():
     pass
 
+# Main
 inits = State(sys.argv[2].split(','),0,None,'')
 solved = 0
 for i in range(1,9):
@@ -127,12 +145,12 @@ for i in range(1,9):
 explored = {}
 fronted = {inits.value : inits}
 if sys.argv[1] == 'bfs':
-    print('bfs calling:')
+    if DEBUG_VAR : print('bfs calling:')
     solution = bfs()
 elif sys.argv[1] == 'dfs':
-    print('dfs calling:')
+    if DEBUG_VAR : print('dfs calling:')
     solution = dfs()
 elif sys.argv[1] == 'ast':
-    print('ast calling:')
+    if DEBUG_VAR : print('ast calling:')
     solution = ast()
 if solution is not None: outgen(solution)
