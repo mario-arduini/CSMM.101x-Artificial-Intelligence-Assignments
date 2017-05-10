@@ -3,8 +3,8 @@ import sys
 from collections import deque
 
 # Debug Mode
-if len(sys.argv)>3 and sys.argv[3]==1 :  DEBUG_VAR = 1
-else  DEBUG_VAR = 0
+if len(sys.argv)>3 and sys.argv[3]=='1' :  DEBUG_VAR = 1
+else : DEBUG_VAR = 0
 
 # State definition
 class State:
@@ -138,6 +138,7 @@ def ast():
     pass
 
 # Main
+if DEBUG_VAR : print("\n *** DEBUG MODE ***\n")
 inits = State(sys.argv[2].split(','),0,None,'')
 solved = 0
 for i in range(1,9):
