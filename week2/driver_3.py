@@ -56,7 +56,6 @@ def bfs():
     msd=0
     while len(front)>0:
         cur = front.popleft()
-        exp += 1
 
         if DEBUG_VAR :
             print('exp = ',exp)
@@ -68,6 +67,7 @@ def bfs():
             return (cur,exp,msd)
         del fronted[cur.value]
         explored[cur.value] = cur
+        exp += 1
         for i in range(len(cur.board)):
             if cur.board[i] == '0':
                 if i>2:
@@ -136,7 +136,6 @@ def dfs():
     msd = 0
     while len(front)>0:
         cur = front.pop();
-        exp += 1
 
         if DEBUG_VAR :
             print('exp = ',exp)
@@ -148,6 +147,7 @@ def dfs():
             return (cur,exp,msd)
         del fronted[cur.value]
         explored[cur.value] = cur
+        exp += 1
         for i in range(len(cur.board)):
             if cur.board[i] == '0':
                 if i in range(0,2) or i in range(3,5) or i in range(6,8):
