@@ -24,12 +24,9 @@ if DEBUG_VAR :
         print(board[3:6])
         print(board[6:9])
 
-# Utility to expand nodes (require node and direction [0 for 'Up',1 for 'Right',2 for 'Down',3 for 'Left'])
+# Utility to expand nodes (require node, direction [0 for 'Up',1 for 'Right',2 for 'Down',3 for 'Left'] and '0' offset)
 def expnode(node,dir,i):
-    global msd
-    global explored
-    global fronted
-    global front
+    global msd, explored, fronted, front
     if dir is 0:
         dirword = 'Up'
         offset = -3
@@ -58,102 +55,67 @@ def expnode(node,dir,i):
 
 
 # Utility to generate the output file (require a tuple with final state, explored nodes and maximum depth search)
-def outgen(tuple):
+def outgen(s):
+    global exp, msd
     f = open('output.txt','w')
     path = ''
-    s=tuple[0]
-    layer = str(s.layer)
-    exp=tuple[1]
-    msd=tuple[2]
     while s.par is not None:
-        path += "'"
-        path += s.parmove
-        path += "',"
+        path += "'"+s.parmove+"',"
         s = s.par
     path=path[:-1].split(',')
     path.reverse()
     pathstr="["
-    for el in path:
-        pathstr+=el
-        pathstr+=','
+    for el in path :  pathstr+= el+','
     pathstr=pathstr[:-1]+']'
-    output='path_to_goal: '+pathstr+'\ncost_of_path: '+layer+'\nnodes_expanded: '+str(exp)+'\nsearch_depth: '+layer+'\nmax_search_depth: '+str(msd)
+    output='path_to_goal: '+pathstr+'\ncost_of_path: '+str(s.layer)+'\nnodes_expanded: '+str(exp)+'\nsearch_depth: '+str(s.layer)+'\nmax_search_depth: '+str(msd)
     f.write(output)
     #f.write(('\nrunning_time: ',rt))
     #f.write(('\nmax_ram_usage: ',mu))
 
 # implementation of Breadth First Search
 def bfs():
-    global front
+    global exp, msd, front
     front = deque([inits])
-    global exp
-    global msd
     while len(front)>0:
         cur = front.popleft()
-
         if DEBUG_VAR :
             print('exp = ',exp)
             print('dequeued depth('+str(cur.layer)+')')
             pb(cur.board)
-
         if cur.value == solved:
             if DEBUG_VAR : print('solved (depth '+str(cur.layer)+') ',cur.board," node expanded ",exp," msd ",msd)
-            return (cur,exp,msd)
+            return cur
         del fronted[cur.value]
         explored[cur.value] = cur
         exp += 1
-        for i in range(len(cur.board)):
-            if cur.board[i] == '0':
-                if i>2:
-                    #expand up
-                    expnode(cur,0,i)
-                if i<6:
-                    #expand down
-                    expnode(cur,2,i)
-                if i in range(1,3) or i in range(4,6) or i in range(7,9):
-                    #expand left
-                    expnode(cur,3,i)
-                if i in range(0,2) or i in range(3,5) or i in range(6,8):
-                    #expand right
-                    expnode(cur,1,i)
-                break
+        i = cur.board.index('0')
+        if i>2: expnode(cur,0,i) #expand up
+        if i<6: expnode(cur,2,i) #expand down
+        if i in range(1,3) or i in range(4,6) or i in range(7,9): expnode(cur,3,i) #expand left
+        if i in range(0,2) or i in range(3,5) or i in range(6,8): expnode(cur,1,i) #expand right
     return None
 
 # Depth First Search
 def dfs():
-    global front
+    global exp, msd, front
     front = [inits]
-    global exp
-    global msd
     while len(front)>0:
         cur = front.pop();
-
         if DEBUG_VAR :
             print('exp = ',exp)
             print('dequeued depth('+str(cur.layer)+')')
             pb(cur.board)
-
         if cur.value == solved:
             if DEBUG_VAR : print('solved (depth '+str(cur.layer)+') ',cur.board," node expanded ",exp," msd ",msd)
-            return (cur,exp,msd)
+            return cur
         del fronted[cur.value]
         explored[cur.value] = cur
         exp += 1
-        for i in range(len(cur.board)):
-            if cur.board[i] == '0':
-                if i in range(0,2) or i in range(3,5) or i in range(6,8):
-                    #expand right
-                    expnode(cur,1,i)
-                if i in range(1,3) or i in range(4,6) or i in range(7,9):
-                    #expand left
-                    expnode(cur,3,i)
-                if i<6:
-                    #expand down
-                    expnode(cur,2,i)
-                if i>2:
-                    #expand up
-                    expnode(cur,0,i)
-                break
+        i = cur.board.index('0')
+        if i in range(0,2) or i in range(3,5) or i in range(6,8): expnode(cur,1,i) #expand right
+        if i in range(1,3) or i in range(4,6) or i in range(7,9): expnode(cur,3,i) #expand left
+        if i<6: expnode(cur,2,i) #expand down
+        if i>2: expnode(cur,0,i) #expand up
     return None
 
 
@@ -163,8 +125,7 @@ def ast():
 
 # Main
 if DEBUG_VAR : print("\n *** DEBUG MODE ***\n")
-inits = State(sys.argv[2].split(','),0,None,'')
-solved = 0
+inits, solved = State(sys.argv[2].split(','),0,None,''), 0
 for i in range(1,9):
     solved += i*i
 explored = {} # dictionary containing explored nodes
