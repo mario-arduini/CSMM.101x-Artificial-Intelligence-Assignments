@@ -73,9 +73,7 @@ def bfs():
                 if i>2:
                     #expand up
                     newboard = cur.board.copy()
-                    swap=newboard[i-3]
-                    newboard[i-3]=newboard[i]
-                    newboard[i]=swap
+                    newboard[i-3],newboard[i] = newboard[i],newboard[i-3]
                     new = State(newboard,cur.layer+1,cur,'Up')
                     if not (new.value in explored or new.value in fronted):
                         if DEBUG_VAR :
@@ -87,9 +85,7 @@ def bfs():
                 if i<6:
                     #expand down
                     newboard = cur.board.copy()
-                    swap=newboard[i+3]
-                    newboard[i+3]=newboard[i]
-                    newboard[i]=swap
+                    newboard[i+3],newboard[i] = newboard[i],newboard[i+3]
                     new = State(newboard,cur.layer+1,cur,'Down')
                     if not (new.value in explored or new.value in fronted):
                         if DEBUG_VAR :
@@ -101,9 +97,7 @@ def bfs():
                 if i in range(1,3) or i in range(4,6) or i in range(7,9):
                     #expand left
                     newboard = cur.board.copy()
-                    swap=newboard[i-1]
-                    newboard[i-1]=newboard[i]
-                    newboard[i]=swap
+                    newboard[i-1],newboard[i] = newboard[i],newboard[i-1]
                     new = State(newboard,cur.layer+1,cur,'Left')
                     if not (new.value in explored or new.value in fronted):
                         if DEBUG_VAR :
@@ -115,9 +109,7 @@ def bfs():
                 if i in range(0,2) or i in range(3,5) or i in range(6,8):
                     #expand right
                     newboard = cur.board.copy()
-                    swap=newboard[i+1]
-                    newboard[i+1]=newboard[i]
-                    newboard[i]=swap
+                    newboard[i+1],newboard[i] = newboard[i],newboard[i+1]
                     new = State(newboard,cur.layer+1,cur,'Right')
                     if not (new.value in explored or new.value in fronted):
                         if DEBUG_VAR :
@@ -153,9 +145,7 @@ def dfs():
                 if i in range(0,2) or i in range(3,5) or i in range(6,8):
                     #expand right
                     newboard = cur.board.copy()
-                    swap=newboard[i+1]
-                    newboard[i+1]=newboard[i]
-                    newboard[i]=swap
+                    newboard[i+1],newboard[i] = newboard[i],newboard[i+1]
                     new = State(newboard,cur.layer+1,cur,'Right')
                     if not (new.value in explored or new.value in fronted):
                         if DEBUG_VAR :
@@ -167,9 +157,7 @@ def dfs():
                 if i in range(1,3) or i in range(4,6) or i in range(7,9):
                     #expand left
                     newboard = cur.board.copy()
-                    swap=newboard[i-1]
-                    newboard[i-1]=newboard[i]
-                    newboard[i]=swap
+                    newboard[i-1],newboard[i] = newboard[i],newboard[i-1]
                     new = State(newboard,cur.layer+1,cur,'Left')
                     if not (new.value in explored or new.value in fronted):
                         if DEBUG_VAR :
@@ -181,9 +169,7 @@ def dfs():
                 if i<6:
                     #expand down
                     newboard = cur.board.copy()
-                    swap=newboard[i+3]
-                    newboard[i+3]=newboard[i]
-                    newboard[i]=swap
+                    newboard[i+3],newboard[i] = newboard[i],newboard[i+3]
                     new = State(newboard,cur.layer+1,cur,'Down')
                     if not (new.value in explored or new.value in fronted):
                         if DEBUG_VAR :
@@ -195,9 +181,7 @@ def dfs():
                 if i>2:
                     #expand up
                     newboard = cur.board.copy()
-                    swap=newboard[i-3]
-                    newboard[i-3]=newboard[i]
-                    newboard[i]=swap
+                    newboard[i-3],newboard[i] = newboard[i],newboard[i-3]
                     new = State(newboard,cur.layer+1,cur,'Up')
                     if not (new.value in explored or new.value in fronted):
                         if DEBUG_VAR :
