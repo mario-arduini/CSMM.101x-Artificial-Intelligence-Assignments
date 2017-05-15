@@ -1,6 +1,10 @@
 # import
 import sys
 from collections import deque
+import time
+
+# time-check
+start_time = time.time()
 
 # Debug Mode
 if len(sys.argv)>3 and sys.argv[3]=='1' :  DEBUG_VAR = 1
@@ -10,12 +14,11 @@ else : DEBUG_VAR = 0
 class State:
     def __init__(self,board,layer,parent,move):
         self.board = board
-        self.value = 0
-        for i in range(1,9):
-            self.value += int(board[i])*i
+        self.value = ''.join(str(i) for i in board)
         self.layer = layer
         self.par = parent
         self.parmove = move
+        if DEBUG_VAR : print(self.value)
 
 # Utility to print the board (3x3)
 if DEBUG_VAR :
@@ -56,10 +59,12 @@ def expnode(node,dir,i):
 
 # Utility to generate the output file (require a tuple with final state, explored nodes and maximum depth search)
 def outgen(s):
-    global exp, msd
+    global exp, msd, start_time
+    cost = 0
     f = open('output.txt','w')
     path = ''
     while s.par is not None:
+        cost += 1
         path += "'"+s.parmove+"',"
         s = s.par
     path=path[:-1].split(',')
@@ -67,14 +72,13 @@ def outgen(s):
     pathstr="["
     for el in path :  pathstr+= el+','
     pathstr=pathstr[:-1]+']'
-    output='path_to_goal: '+pathstr+'\ncost_of_path: '+str(s.layer)+'\nnodes_expanded: '+str(exp)+'\nsearch_depth: '+str(s.layer)+'\nmax_search_depth: '+str(msd)
+    output='path_to_goal: '+pathstr+'\ncost_of_path: '+str(cost)+'\nnodes_expanded: '+str(exp)+'\nsearch_depth: '+str(cost)+'\nmax_search_depth: '+str(msd)+'\nrunning_time: '+str(time.time()-start_time)
     f.write(output)
-    #f.write(('\nrunning_time: ',rt))
     #f.write(('\nmax_ram_usage: ',mu))
 
 # implementation of Breadth First Search
 def bfs():
-    global exp, msd, front
+    global exp, msd, front, fronted, explored
     front = deque([inits])
     while len(front)>0:
         cur = front.popleft()
@@ -97,7 +101,7 @@ def bfs():
 
 # Depth First Search
 def dfs():
-    global exp, msd, front
+    global exp, msd, front, fronted, explored
     front = [inits]
     while len(front)>0:
         cur = front.pop();
@@ -126,8 +130,7 @@ def ast():
 # Main
 if DEBUG_VAR : print("\n *** DEBUG MODE ***\n")
 inits, solved = State(sys.argv[2].split(','),0,None,''), 0
-for i in range(1,9):
-    solved += i*i
+solved = '012345678'
 explored = {} # dictionary containing explored nodes
 fronted = {inits.value : inits} # dictionary containing frontier nodes
 front = [] # frontier
