@@ -56,7 +56,7 @@ class PlayerAI(BaseAI):
         while time.clock() - startp < 0.19:
             termDepth += 1
             state,util = self.maximize(inits,-1,2000,startp,0,termDepth) # -1,17 just for naive heur
-            if util != None : bestmove = state.move
+            if util != None and state.move != None : bestmove = state.move
         return bestmove
 
 
@@ -88,8 +88,7 @@ class PlayerAI(BaseAI):
                     xMaxT, yMaxT = (x,y)
 
         h2 = 0
-        if xMaxT == 0 or xMaxT == grid.size-1 : h2 += 20
-        if yMaxT == 0 or yMaxT == grid.size-1 : h2 += 20
+        if (xMaxT == 0 or xMaxT == grid.size-1) and (yMaxT == 0 or yMaxT == grid.size-1) : h2 = 80
 
         return h1+h2+h3
 
@@ -98,14 +97,8 @@ class PlayerAI(BaseAI):
             return None,None
         if currDepth == maxDepth:
             return None,self.heur(state.grid)
-        maxChild, maxUtil = None, float("-inf")
+        maxChild, maxUtil = state, float("-inf")
         for child in state.children():
-            if currDepth== 0 :print(str(child.move),end=' ')
-            # debug
-            #for i in range(currDepth):
-            #    print('\t',end='')
-            #print(str(child.move))
-            #
             _, util = self.minimize(child,a,b,startp,currDepth+1,maxDepth)
             if util == None : return None,None # Check timeout
             if util > maxUtil : maxChild, maxUtil = child, util
@@ -118,13 +111,8 @@ class PlayerAI(BaseAI):
             return None,None
         if currDepth == maxDepth:
             return None,self.heur(state.grid)
-        minChild, minUtil = None, float("inf")
+        minChild, minUtil = state, float("inf")
         for child in state.children():
-            # debug
-            #for i in range(currDepth):
-            #    print('\t',end='')
-            #print(str(child.move))
-            #
             _, util = self.maximize(child,a,b,startp,currDepth+1,maxDepth)
             if util == None : return None,None # Check timeout
             if util < minUtil : minChild, minUtil = child, util

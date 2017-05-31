@@ -104,7 +104,7 @@ class GameManager:
             self.updateAlarm(time.clock())
 
             turn = 1 - turn
-        print(maxTile)
+        return maxTile #print(maxTile)
 
     def isGameOver(self):
         return not self.grid.canMove()
@@ -122,16 +122,19 @@ class GameManager:
         self.grid.setCellValue(cell, tileValue)
 
 def main():
-    gameManager = GameManager()
-    playerAI  	= PlayerAI()
-    computerAI  = ComputerAI()
-    displayer 	= Displayer()
+    f = open('2048out.txt', 'w')
+    for i in range(20):
+        gameManager = GameManager()
+        playerAI  	= PlayerAI()
+        computerAI  = ComputerAI()
+        displayer 	= Displayer()
 
-    gameManager.setDisplayer(displayer)
-    gameManager.setPlayerAI(playerAI)
-    gameManager.setComputerAI(computerAI)
+        gameManager.setDisplayer(displayer)
+        gameManager.setPlayerAI(playerAI)
+        gameManager.setComputerAI(computerAI)
 
-    gameManager.start()
+        outVal = gameManager.start()
+        f.write(str(outVal))
 
 if __name__ == '__main__':
     main()
