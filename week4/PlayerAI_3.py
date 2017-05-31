@@ -63,32 +63,38 @@ class PlayerAI(BaseAI):
     def heur(self,grid):
         # h1 num of available cells
         availableC = len(grid.getAvailableCells())
-        if availableC > 4 : h1 = 25
-        else : h1 = availableC*5
+        if availableC > 4 : h1 = 100
+        else : h1 = availableC*20
         # h2 max tile in the corner, h3 same value near
         h3 = 0
 
         maxT = grid.map[0][0]
         xMaxT, yMaxT = (0,0)
         for x in range(1,grid.size):
-            if grid.map[x][0] > 4:
-                a = abs(grid.map[x][0]-grid.map[x-1][0])
-                if a == 0 : a = 1
-                h3 += math.log2(grid.map[x][0])-2*math.log2(a)
+            if grid.map[x][0] > 4 and grid.map[x-1][0] != 0:
+                adj = abs(math.log2(grid.map[x][0]/grid.map[x-1][0]))
+                h3 += 7*math.log2(grid.map[x][0])-5*adj
             if grid.map[x][0] > maxT :
                 maxT = grid.map[x][0]
                 xMaxT, yMaxT = (x,0)
             for y in range(1,grid.size):
                 if grid.map[x][y] > 4:
-                    a = min(abs(grid.map[x][y]-grid.map[x][y-1]),abs(grid.map[x][y]-grid.map[x-1][y]))
-                    if a == 0 : a = 1
-                    h3 += math.log2(grid.map[x][y])-2*math.log2(a)
+                    if grid.map[x][y-1] != 0:
+                        adj1 = abs(math.log2(grid.map[x][y]/grid.map[x][y-1]))
+                    else : adj1 = float("+inf")
+                    if grid.map[x-1][y] != 0:
+                        adj2 = abs(math.log2(grid.map[x][y]/grid.map[x-1][y]))
+                    else : adj2 = float("+inf")
+                    adj = min(adj1,adj2)
+                    if adj != float("+inf"):
+                        h3 += 10*math.log2(grid.map[x][y])-5*adj
                 if grid.map[x][y] > maxT :
                     maxT = grid.map[x][y]
                     xMaxT, yMaxT = (x,y)
 
         h2 = 0
-        if (xMaxT == 0 or xMaxT == grid.size-1) and (yMaxT == 0 or yMaxT == grid.size-1) : h2 = 80
+        if (xMaxT == 0 or xMaxT == grid.size-1) or (yMaxT == 0 or yMaxT == grid.size-1) : h2 = 150
+        if (xMaxT == 0 or xMaxT == grid.size-1) and (yMaxT == 0 or yMaxT == grid.size-1) : h2 = 300
 
         return h1+h2+h3
 

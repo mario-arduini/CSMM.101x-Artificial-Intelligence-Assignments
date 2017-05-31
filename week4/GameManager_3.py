@@ -122,8 +122,9 @@ class GameManager:
         self.grid.setCellValue(cell, tileValue)
 
 def main():
-    f = open('2048out.txt', 'w')
-    for i in range(20):
+    f = open('2048out.txt', 'a')
+    f.write("\n")
+    for i in range(5):
         gameManager = GameManager()
         playerAI  	= PlayerAI()
         computerAI  = ComputerAI()
@@ -134,7 +135,7 @@ def main():
         gameManager.setComputerAI(computerAI)
 
         outVal = gameManager.start()
-        f.write(str(outVal))
+        f.write(str(outVal)+"\n")
 
 if __name__ == '__main__':
     main()
