@@ -10,7 +10,8 @@ def main():
     yi = np.array(dset[2])
 
     # prepare output
-    #fout = sys.argv[2]
+    fout = sys.argv[2]
+    f = open(fout,"w")
 
     # initialize weights
     w = np.ones(3)
@@ -22,13 +23,14 @@ def main():
         for i,xi in enumerate(data):
             if np.sum(xi*w)*yi[i] < 0 :
                 w += xi*yi[i]
-                print(w)
+                f.write(str(w[1])+','+str(w[2])+','+str(w[0])+'\n')
 
     # save results
-    print(w)
+    f.write(str(w[1])+','+str(w[2])+','+str(w[0])+'\n')
+    f.close()
 
     # plot if required
-    if len(sys.argv>3) and sys.argv[3] is '-plot':
+    if len(sys.argv)>3 and sys.argv[3] == '-plot':
         import matplotlib.pyplot as plt
         plt.plot(dset[0][yi==1],dset[1][yi==1],"or")
         plt.plot(dset[0][yi==-1],dset[1][yi==-1],"ob")
