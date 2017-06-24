@@ -12,15 +12,16 @@ def main():
     yi = np.array(dset[2])
 
     # learning rates, iteration's number
-    alfa = .1
+    alfa = .05
     its = 100
 
     # Gradient descend
     beta = np.zeros(3)
     for i in range(its):
-        beta[0] = beta[0] - alfa*np.sum((np.sum(beta*data,axis=1)-yi)*data[:,0])/len(data)
-        beta[1] = beta[1] - alfa*np.sum((np.sum(beta*data,axis=1)-yi)*data[:,1])/len(data)
-        beta[2] = beta[2] - alfa*np.sum((np.sum(beta*data,axis=1)-yi)*data[:,2])/len(data)
+        dist = np.sum(beta*data,axis=1)-yi
+        beta[0] = beta[0] - alfa*np.sum(dist*data[:,0])/len(data)
+        beta[1] = beta[1] - alfa*np.sum(dist*data[:,1])/len(data)
+        beta[2] = beta[2] - alfa*np.sum(dist*data[:,2])/len(data)
         print(beta)
 
 
@@ -30,10 +31,9 @@ def main():
         import matplotlib.pyplot as plt
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        #ax.scatter(dset[0],dset[1],dset[2],"or")
-        xr = np.linspace(1,10,20)
-        yr = np.linspace(1,70,20)
-        ax.scatter(xr,yr,beta[0]+beta[1]*xr+beta[2]*yr,color="b")
+        ax.scatter(data[:,1],data[:,2],dset[2],"or")
+        xr, yr = np.meshgrid(range(-3,4), range(-3,4))
+        ax.plot_surface(xr,yr,beta[0]+beta[1]*xr+beta[2]*yr,color="b")
         ax.set_xlabel('Age')
         ax.set_ylabel('Weight')
         ax.set_zlabel('Height')
